@@ -183,4 +183,4 @@ stash 贮藏
 想要切换分支,但是还不想要提交之前的工作;所以贮藏修改
 执行git stash 或者 git stash push
 
-git restore dksjdkajsdhjkashdkjsdfsfsdfsfdsfadhksh
+git restore dksfjklsdfjlsdkfjlksdfjdl
