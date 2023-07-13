@@ -58,6 +58,9 @@ git log后面加上路径可以查看某个文件的历史
 git commit --amend有时候我们提交完了才发现漏掉了几个文件没有添加,或者提交信息写错了。 此时,可以运行带有 --amend 选项的提交命令来重新提交:
 
 git reset HEAD <file>取消暂存
+下面两个命令
+git reset --hard origin/master
+git reset --hard HEAD 
 git checkout -- <file> 是一个危险的命令。 你对那个文件在本地的任何修改都会消失——Git 会用最近提交的版本覆盖掉它
 
 git remote 
