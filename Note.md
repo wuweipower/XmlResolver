@@ -74,6 +74,7 @@ git remote show <remote>
 
 git remote rename  <old remote name> <new remote name>
 git remote rm or git remote remove 移除一个远程仓库
+git push origin --delete branch,该指令也会删除追踪分支
 
 git tag 列出所有的标签
 git tag -l "v1.8.5*" 里面是匹配表达式
@@ -183,3 +184,8 @@ stash 贮藏
 执行git stash 或者 git stash push
 
 git restore 
+
+
+$ git cherry-pick feature
+# 上面代码表示将feature分支的最近一次提交，转移到当前分支。
+git cherry-pick 可以pick对应的hash码，把对应的提交（仅限那次提交版本）转移到当前分支后面
