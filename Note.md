@@ -1,12 +1,12 @@
-git init
-git add <filename>
-git commit -m "msg"
-git clone <url>
+git init  
+git add <filename>  
+git commit -m "msg"  
+git clone <url>  
 git status 查看哪些文件处于什么状态
-git add 会开始跟踪一个文件或者把已跟踪的文件放在暂存区，还能用于合并时把有冲突的文件标记为已解决状态
-
+git add 会开始跟踪一个文件或者把已跟踪的文件放在暂存区，还能用于合并时把有冲突的文件标记为已解决状态  
 git status -s 或者 git status --short获得格式更加紧凑的输出
 新添加的未跟踪文件前面有 ?? 标记,新添加到暂存区中的文件前面有 A 标记,修改过的文件前面有 M 标记。
+
 
 文件 .gitignore 的格式规范如下:
 • 所有空行或者以 # 开头的行都会被 Git 忽略。
@@ -189,3 +189,6 @@ git restore
 $ git cherry-pick feature
 # 上面代码表示将feature分支的最近一次提交，转移到当前分支。
 git cherry-pick 可以pick对应的hash码，把对应的提交（仅限那次提交版本）转移到当前分支后面
+
+git clone [-b <branch>] <url> 克隆指定分支
+git pull [--rebase] 通常pull前，保证本地修改已经commit了
