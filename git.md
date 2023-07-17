@@ -52,6 +52,8 @@ git log --pretty=format:"%h %s" --graph
 git log后面加上路径可以查看某个文件的历史  
 
 git commit --amend有时候我们提交完了才发现漏掉了几个文件没有添加,或者提交信息写错了。 此时,可以运行带有 --amend 选项的提交命令来重新提交:  
+直接使用git commit --amend会将暂存区的文件合并到上一个，所以首先要add
+git commit --amend file就会指定file合并到上一个
 
 git reset HEAD <file>取消暂存  
 下面两个命令  
@@ -138,11 +140,11 @@ git checkout --track origin/serverfix 如果你尝试检出的分支 (a) 不存�
 git branch -u orgin/serverfix  
 设置已有的本地分支跟踪一个刚刚拉取下来的远程分支,或者想要修改正在跟踪的上游分支, 你可以在任意时间使用 -u 或 --set-upstream-to 选项运行 git branch 来显式地设置。  
 
-git merge <remote>/<branch> 将远程仓库上的分支合并到当前的分支  
+git merge <remote>/<branch> 将远程仓库上的分支合并到当前的分支   
 
 git branch -vv 这会将所有的本地分支列出来并且包含更多的信息,如每一个分支正在跟踪哪个远程分支与本地分支是否是领先、落后或是都有  
 
-it push origin --delete serverfix 删除远程仓库的分支
+git push origin --delete serverfix 删除远程仓库的分支
 
 rebase 命令将提交到某一分支上的所有修改都移至另一分支上  
 merge是从别的分支merge到当前，rebase是把当前的修改移到指定分支的末尾。  
@@ -157,6 +159,7 @@ merge是从别的分支merge到当前，rebase是把当前的修改移到指定�
 git rebase master server 把server rebase到master上  
 git rebase --onto master server client   
 取出 client 分支,找出它从 server 分支分歧之后的补丁, 然后把这些补丁在master 分支上重放一遍,让 client 看起来像直接基于 master 修改一样。这样server上的修改就不会合并到matser上
+git rebase -i <start> <end> 会显示这两个提交之间提交信息，可以进行编辑，下面的命令行有提示，然后就可以对这几次提交进行修改
 
 git push -f 强制推送
 
@@ -186,16 +189,15 @@ stash 贮藏
 
 git restore   
 
-
 $ git cherry-pick feature  
 \#上面代码表示将feature分支的最近一次提交，转移到当前分支。  
 git cherry-pick 可以pick对应的hash码，把对应的提交（仅限那次提交版本）转移到当前分支后面  
 
 git clone [-b <branch>] <url> 克隆指定分支  
-git pull [--rebase] 通常pull前，保证本地修改已经commit了  
+git pull [--rebase] 通常pull前，保证本地修改已经commit了或者stash  
 git commit [-a] [--amend] [-m <commit log>]  
 -a：将未stage的文件也一块提交  
---amend: 修复上一个提交，一般在忘记提交新增文件或还有其他修改的情况下使用。 若上一个提交已经push完毕，这个操作将导致本地分支与远程分支不一致，应该禁止这种做法。  
+--amend: 修复上一个提交，一般在忘记提交新增文件或还有其他修改的情况下使用。 若上一个提交已经push完毕，这个操作将导致本地分支与远程分支不一致，应该禁止这种做法。后面跟上file  
 git push  
 git checkout -b <branch> [<base branch>]  
 git checkout <branch>  
