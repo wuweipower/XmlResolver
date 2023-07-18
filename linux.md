@@ -341,7 +341,7 @@ du -sh * | sort -nr #本例中的管道命令( | )用于将 du 命令的输出�
 # -r 是reverse的意思
 ```
 
-数据搜索
+### 数据搜索
 ```bash
 grep [options] pattern [file]
 ```
@@ -352,7 +352,184 @@ grep -c t file # -c count 只想知道多少行含有匹配的模式
 grep -e t -e f file # -e 指定多个匹配模式
 ```
 
-数据压缩  
+### 数据压缩  
 | 工具 | 文件拓展名 |
+|  ----  | ----  |
 | compress | .Z |
+| gzip | .gz
+| bzip2 | .bz2|
+| xz | .xz|
+| zip | .zip |
+
+```
+gzip # 用于压缩文件
+gzcat # 用于查看压缩过的文本文件的内容。
+gunzip #用于解压文件
+```
+
+```bash
+gzip myfile # 就会把myfile生成为myfile.gz
+gzip my* # 就会把所有以my开头的文件分别生成对应的gz 文件
+```
+
+### 数据归档
+
+虽然 zip 命令能够很好地将数据压缩并归档为单个文件,但它并不是 Unix 和 Linux 中的标准归档工具。目前,Unix 和 Linux 中最流行的归档工具是 tar 命令。
+
+```
+tar function [options] object1 object2 ...
+```
+
+function  
+| 操作 | 长选项 | 描述 |
+|  ----  |  ----  | ---- |
+| -A | --concatenate | 将一个tar归档文件追加到另一个tar归档文件末尾 |
+| -c | --create | 创建新的 tar 归档文件|
+| -r | --append | 将文件追加到 tar 归档文件末尾|
+| -x | --extract | 从 tar 归档文件中提取文件 |
+|-t | --list | 列出 tar 归档文件的内容|
+
+option
+| 选项 | 描述|
+| ---- | ---- |
+| -C dir | 切换到指定目录 |
+| -f file | 将结果输出到文件(或设备) | 
+| -v | 在处理文件时显示文件名 |
+| -z | 将输出传给 gzip 命令进行压缩 |
+
+eg
+```bash
+tar -cvf test.tar test/ test2/ # 创建归档文件
+tar -tf test.tar #列出了(但不提取)tar 文件 test.tar 的内容。
+tar -xvf test.tar # 该命令从 tar 文件 test.tar 中提取内容。如果创建的时候 tar 文件含有目录结构,则在当前目录中重建该目录的整个结构。
+tar -zxvf filename.tgz
+```
+
+# 理解shell
+```bash
+which bash # 帮助我们找出bash shell的位置
+```
+多次在bash里面输入bash其实就是又创建了一个新的进程。
+
+可以在单行中指定要依次运行的一系列命令。这可以通过命令列表来实现,只需将命令之间以分号( ; )分隔即可
+
+```
+pwd ; ls test* ; cd /etc ; pwd ; cd ; pwd ; ls my*
+```
+要想成为进程列表,命令列表必须将命令放入圆括号内:
+```bash
+(pwd ; ls test* ; cd /etc ; pwd ; cd ; pwd ; ls my*)
+```
+
+除了 ps 命令,也可以使用 jobs 命令来显示后台作业信息。 jobs 命令能够显示当前运行在后台模式中属于你的所有进程(作业)
+```
+jobs
+ps -f
+```
+
+通过将进程列表置入后台,可以在子 shell 中进行大量的多进程处理。由此带来的一个好处是终端不再和子 shell 的 I/O 绑定在一起。
+ 
+加个&就可以放在后台
+```
+(sleep 2 ; echo $BASH_SUBSHELL ; sleep 2)&
+```
+
+协程
+协程同时做两件事:一是在后台生成一个子 shell,二是在该子 shell 中执行命令
+```bash
+coproc sleep 10
+coproc My_Job { sleep 10; } # 设置名字
+```
+**用扩展语法,协程名被设置成了 My_Job 。这里要注意,扩展语法写起来有点儿小麻烦。你必须确保在左花括号( { )和内部命令名之间有一个空格。还必须保证内部命令以分号( ; )结尾。另外,分号和右花括号( } )之间也得有一个空格。**
+
+## 外部命令与内建命令
+### 外部命令
+外部命令(有时也称为文件系统命令)是存在于 bash shell 之外的程序。也就是说,它并不属于 shell 程序的一部分。外部命令程序通常位于/bin、/usr/bin、/sbin 或/usr/sbin 目录中。  
+可以使用 which 命令和 type 命令找到其对应的文件名
+
+作为外部命令, ps 命令在执行时会产生一个子进程。
+
+### 内建命令
+与外部命令不同,内建命令无须使用子进程来执行。内建命令已经和 shell 编译成一体,作为 shell 的组成部分存在,无须借助外部程序文件来执行
+
+可以使用 type 命令来判断某个命令是否为内建
+要查看命令的不同实现,可以使用 type 命令的 -a 选项
+
+bash shell 会跟踪你最近使用过的命令。你可以重新唤回这些命令,甚至加以重用。 history是一个实用的内建命令,能帮助你管理先前执行过的命令。
+
+当输入 !! 时,bash 会先显示从 shell 的历史记录中唤回的命令,然后再执行该命令
+
+可以在不退出 shell 的情况下强制将命令历史记录写入.bash_history 文件。为此,需要使用history 命令的 -a 选项:
+
+你可以唤回历史记录中的任意命令。只需输入惊叹号和命令在历史记录中的编号即可:
+
+
+# linux 环境变量
+## 全局变量
+全局环境变量对于 shell 会话和所有生成的子 shell 都是可见的。局部环境变量则只对创建它的 shell 可见。如果程序创建的子 shell 需要获取父 shell 信息,那么全局环境变量就能派上用场了。
+
+系统环境变量基本上会使用全大写字母,以区别于用户自定义的环境变量。
+```bash
+# 查看环境变量
+env
+printenv 
+# 显示个别环境变量的值
+printenv HOME
+echo $HOME
+```
+在变量名前加上 $ 可不仅仅是能够显示变量当前的值,它还能让变量作为其他命令的参数
+
+
+在命令行中查看局部环境变量列表有点儿棘手。遗憾的是,没有哪个命令可以只显示这类变量。 set 命令可以显示特定进程的所有环境变量,既包括局部变量、全局变量,也包括用户自定义变量
+
+设置局部变量
+```bash
+my_variable=Hello
+my_variable="Hello World"
+```
+如果没有引号,则 bash shell 会将下一个单词( World)视为另一个要执行的命令。
+
+设置全局变量
+```
+my_variable="I am Global now"
+export my_variable
+```
+在定义并导出变量 my_variable 后, bash 命令生成了一个子 shell。在该子 shell 中可以正确显示出全局环境变量 my_variable 的值。子 shell 随后改变了这个变量的值。但是,这种改变仅在子 shell 中有效,并不会反映到父 shell 环境中。
+
+子 shell 甚至无法使用 export 命令改变父 shell 中全局环境变量的值
+
+删除环境变量
+```bash
+my_variable="I am going to be removed"
+unset my_variable
+```
+
+## 设置path环境变量
+当你在 shell CLI 中输入一个外部命令时,shell 必须搜索系统,从中找到对应的程序。 PATH 环境变量定义了用于查找命令和程序的目录
+
+只需引用原来的 PATH 值,添加冒号( : ),然后再使用绝对路径输入新目录即可
+```bash
+PATH=$PATH:/home/christine/Scripts
+```
+
+### 环境变量持久化
+对全局环境变量(Linux 系统的所有用户都要用到的变量)来说,可能更倾向于将新的或修改过的变量设置放在/etc/profile 文件中,但这可不是什么好主意。如果升级了所用的发行版,则该文件也会随之更新,这样一来,所有定制过的变量设置可就都没有了  
+
+最好在/etc/profile.d 目录中创建一个以.sh 结尾的文件
+
+alias 命令设置无法持久生效。你可以把个人的 alias 设置放在$HOME/.bashrc启动文件中,使其效果永久化。
+
+## 数组变量
+要为某个环境变量设置多个值,可以把值放在圆括号中,值与值之间以空格分隔:
+
+```bash
+mytest=(zero one two three four)
+echo ${mytest[2]}
+echo ${mytest[*]}
+mytest[2]=seven
+unset mytest[2]
+```
+
+***
+# linux 文件权限
 
