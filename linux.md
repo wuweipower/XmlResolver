@@ -820,3 +820,57 @@ Vgextend
 Vgreduce  
 lvextend  
 lvreduce  
+
+# 安装软件
+
+## 基于Debian系统
+各种主流的 Linux 发行版都采用了某种形式的软件包管理系统来控制软件和库的安装。  
+
+软件包存储在称为仓库(repository)的服务器上,可以利用本地 Linux 系统中的软件包管理器通过 Internet 访问,在其中搜索新的软件包,或是更新系统中已安装的软件包。
+
+软件包通常存在依赖关系,为了能够正常运行,被依赖的包必须提前安装。软件包管理器会检测这些依赖关系并提前安装好所有额外的软件包
+
+基于 Debian 的发行版(比如 Ubuntu 和 Linux Mint)使用的是 dpkg 命令  
+基于 Red Hat 的发行版(比如 Fedora、CentOS 和 openSUSE)使用的是 rpm 命令  
+
+dpkg 命令假定你已经将 DEB 包文件下载到本地 Linux 系统或是以 URL 的形式提供。但很多时候并非如此。通常情况下,你更愿意从所用的 Linux 发行版仓库中安装软件包。为此,需要使用 APT(advanced package tool)工具集
+
+- apt-cache
+- apt-get
+- apt
+
+apt 命令本质上是 apt-cache 命令和 apt-get 命令的前端。APT 的好处是不需要记住什么时候该使用哪个工具——它涵盖了软件包管理所需的方方面面
+
+apt show 命令并不会指明软件包是否已经安装。它只根据软件仓库显示该软件包的详细信息。有一个细节无法通过 apt 获得,即与特定软件包相关的所有文件。为此,需要使用 dpkg  
+命令:
+`dpkg -L package_name`
+
+也可以执行相反的操作,即找出特定的文件属于哪个软件包:
+`dpkg --search absolute_file_name`
+
+dpkg --search /bin/getfacl  
+acl: /bin/getfacl  
+输出表明文件 getfacl 属于 acl 软件包。
+
+## 使用apt安装
+
+```bash
+apt search package_name # 在默认情况下，search 命令显示的是在名称或者描述中，包含搜索关键字的那些软件包
+
+apt --names-only search zsh # 如果只是搜索软件包名称
+
+apt install package_name
+```
+
+## apt 升级软件
+```bash
+sudo apt upgrade
+apt full-upgrade # 如果必须删除某个软件包才能完成升级,可以使用以下命令:
+```
+
+## 卸载软件包
+```bash
+sudo apt purge zsh
+```
+
+注意,在 purge 的输出中, apt 警告我们 zsh-common 软件包存在依赖,不能自动删除,以免其他软件包还有需要。如果确定有依赖关系的软件包不会再有他用,可以使用 autoremove命令将其删除:
