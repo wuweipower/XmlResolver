@@ -852,7 +852,7 @@ dpkg --search /bin/getfacl
 acl: /bin/getfacl  
 输出表明文件 getfacl 属于 acl 软件包。
 
-## 使用apt安装
+### 使用apt安装
 
 ```bash
 apt search package_name # 在默认情况下，search 命令显示的是在名称或者描述中，包含搜索关键字的那些软件包
@@ -862,15 +862,128 @@ apt --names-only search zsh # 如果只是搜索软件包名称
 apt install package_name
 ```
 
-## apt 升级软件
+### apt 升级软件
 ```bash
 sudo apt upgrade
 apt full-upgrade # 如果必须删除某个软件包才能完成升级,可以使用以下命令:
 ```
 
-## 卸载软件包
+### 卸载软件包
 ```bash
 sudo apt purge zsh
 ```
 
 注意,在 purge 的输出中, apt 警告我们 zsh-common 软件包存在依赖,不能自动删除,以免其他软件包还有需要。如果确定有依赖关系的软件包不会再有他用,可以使用 autoremove命令将其删除:
+
+## 基于Red Hat系统
+- yum
+- zypper
+- dnf yum的升级版
+
+上面前端全部基于rpm。
+
+
+
+### 列出已经安装的软件包
+
+```bash
+dnf list installed
+#输出的信息可能在屏幕上一闪而过，最好是重定向到一个文件，然后使用more或者less查看
+dnf list installed > installed_software
+```
+
+```bash
+dnf list xterm # 查看特定软件包的详细信息
+dnf list intalled xterm # 是否安装
+```
+
+```bash
+dnf provides /usr/bin/gzip # 尝试找出哪个软件包安装了 /usr/bin/gzip
+# 会检查本地仓库和默认的fedora仓库
+```
+
+### dnf 安装软件
+
+```
+dnf install package_name
+sudo dnf install zsh
+```
+
+### dnf 升级软件
+```bash
+dnf list upgrades # 查看已经安装软件包的可用更新
+dnf upgrade package_name # 升级特定软件包
+dnf upgrade # 更新所有软件
+```
+
+### 卸载软件
+```bash
+dnf remove package_name
+```
+
+### 处理损坏的依赖关系
+
+有时在安装多个软件包时,一个软件包的依赖关系可能会被另一个软件包搞乱。这称为依赖关系损坏(broken dependency)。  
+如果你的系统出现了这种情况,可以先试试下列命令:
+```
+dnf clean all
+# 然后尝试使用dnf upgrade
+```
+
+如果人解决不了
+```
+dnf repoquery --deplist package_name #该命令会显示指定软件包的所有依赖关系以及哪些软件包提供了这种依赖。只要知道软件包需要哪个库,就可以自行安装了
+```
+
+### RPM 仓库
+
+```bash
+dnf repolist # 查看当前拉取软件的仓库
+```
+如果没有对应的仓库，就需要编辑配置文件
+```
+/etc/yum.repos.d
+/etc/dnf/dnf/conf
+```
+
+使用lftp下载
+```
+sudo apt install lftp
+lftp scutech:dingjia@192.168.88.20
+get 对应文件就行
+```
+
+## 使用容器管理软件
+### snap
+
+```bash
+snap list # 查看已安装
+snap find package_name
+snap info package_name
+snap install package_name
+sudo snap remove package_name
+```
+
+### flatpak
+Red Hat, CentOS, Fedora
+
+```bash
+flatpak list
+flatpak search package_name
+sudo flatpak install app_id
+sudo flatpak uninstall app_id
+```
+
+## 源码安装
+```bash
+tar -Jxvf file.tar.xz
+cd
+ls
+查看readme或者install文件来下载
+#如果缺失
+make # 注意要安装make和gcc这些
+make install
+```
+
+# 编辑器
+
