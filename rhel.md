@@ -7,7 +7,6 @@ enabled=0
 ```
 vim /etc/yum.repos.d/xxx.repo
 主要是修改baseurl
-并且加上enabled=0
 ```
 
 连接虚拟机方便复制粘贴  
