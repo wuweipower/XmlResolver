@@ -5,6 +5,11 @@ enabled=0
 ```
 
 ```
+ifconfig eth0 up
+参考https://blog.csdn.net/lly7858/article/details/9305015
+```
+
+```
 vim /etc/yum.repos.d/xxx.repo
 主要是修改baseurl
 ```
@@ -22,13 +27,19 @@ mkfs.ext4 /dev/sdb1
 echo "/dev/sdb1 /www ext4 defaults 0 0" >> /etc/fstab
 mount 即可
 ```
+
 连接虚拟机方便复制粘贴  
 在虚拟机那里修改/etc/ssh/sshd_config 按照网上的步骤  
 然后service sshd restart
 
 yum install compat-libstdc++-33
- 
+
 libpam冲突问题  
+```
+yum reinstall libstdc++
+yum reinstall pam
+```
+
 ```
 yum clean
 yum distro-sync full
