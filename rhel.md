@@ -28,6 +28,24 @@ echo "/dev/sdb1 /www ext4 defaults 0 0" >> /etc/fstab
 mount 即可
 ```
 
+```bash
+lsblk # 查看目录结构，看是否有 没有挂载的磁盘
+fdisk /dev/sdb # fdisk这个磁盘
+m
+n
+p
+1
+然后设置起始和last
+wq
+lsblk -f 发现多了一个sdb1
+mkfs -t ext4 /dev/sdb1 # 格式化磁盘分区
+lsblk -f # 查看是否格式化为ext4类型
+sudo mount /dev/sdb1 /home/new
+df -Th # 查看是否挂载成功
+blkid /dev/sdb1 # 查看UUID
+echo “UUID/磁盘路径 挂载点 磁盘类型 defaults 0 0” >> /etc/fstab
+```
+
 连接虚拟机方便复制粘贴  
 在虚拟机那里修改/etc/ssh/sshd_config 按照网上的步骤  
 然后service sshd restart
