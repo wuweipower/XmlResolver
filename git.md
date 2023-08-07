@@ -314,14 +314,18 @@ git reset --hard <commit-hash>
 注意，使用 git reset 撤销提交会永久丢弃指定提交之后的所有提交历史，并且这些提交将无法恢复。只有在你确定不再需要这些提交历史时才应该使用 git reset，请务必谨慎使用 --hard 参数，因为它会对您的代码库进行永久性更改。
 
 考试中操作顺序
-git checkout 08746b53
-git checkout -b feature/git-<your-name>
-git cherry-pick
-git add 
-git commit
-git rebase develop
-解决冲突后git add
-git rebase --continue
-git add --amend
-git push
-MR
+```bash
+git checkout 08746b53  
+git checkout -b feature/git-<your-name>  
+git cherry-pick  
+git add   
+git commit  
+git rebase develop  
+解决冲突后git add  
+git rebase --continue  
+git add --amend  
+git push  
+MR  
+```
+
+**笔试的参考答案基本是在progit的附录 关于命令那里**
