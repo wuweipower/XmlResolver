@@ -152,4 +152,47 @@ TEST(function,r)
 4 deconstructer called
 ```
 
+xml树形结构的核心就是递归函数的编写
+```cpp
+parse(T parent, T previous_sibling)
+{
+    ...
+    elem;
+    before_elem_end_tag
+    if(has_child_)
+    {
+        elem->append_child(parse(T, nullptr))
+    }
+    after_elem_end_tag
+    if (next_is_not_parent_end_tag)
+    {
+        elem->set_next_sibling(parse(parent, elem));
+        return elem;
+    }
+    else if(next_is_parent_end_tag)
+    {
+        return elem;
+    }
+}
+```
 
+项目的优化建议
+1. 构造函数放在初始化列表
+2. 不提交.gitignore
+3. 简单的get函数最后加上空格和const
+4. 尽量返回const string&
+5. 不要在头文件using，容易污染
+6. C++11 数据成员声明的时候就可以定义
+7. 使用shared_prt 继承enable_shared_from_this 和使用shared_from_this
+8. 一般可以在Comment类中定义一个: `typedef std::shard_ptr<Comment> ptr`;别的地方就可以`Comment::ptr parse_comment()`;或者在Comment头文件 `typedef std::shard_ptr<Comment> Command_Ptr `; 别的地方就可以 `Comment_Ptr parse_comment()`; 方便命名
+9. 如果形参不需要改动使用const string&
+10. 一般不要自己抛出异常
+11. string默认为空
+12. 时刻加上考虑越界的条件
+13. 头文件中不要定义变量（会造成重复定义），声明extern即可，用另外一个文件定义，然后链接在一起
+14. 使用了static最好加上__thread保证线程安全
+15. nullptr不能赋值给string
+16. 可以折叠switch中的case如果这几个case返回值一样
+17. 不应该出现多个shared_ptr指向同一个裸指针，会double free
+18. const 不能move
+19. 
