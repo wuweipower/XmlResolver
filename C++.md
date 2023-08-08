@@ -119,3 +119,37 @@ assert
 
 多行宏用\换行
 ```
+
+const_cast主要是用来去除const限制，但是地址还是一样的，修改后，原来的值依然不变。
+
+const int &age = 10;
+int& age = 10; //error
+
+赋值不是拷贝，赋值是更新内存中的值，而拷贝是构造一份新的，开辟了新的空间
+赋值重载函数于拷贝构造函数的调用时期：
+当两个对象都已经创建后，之间的 `=` 是赋值，如果是第二个对象是用第一个对象的来创建，就会调用拷贝构造函数。
+关于左值右值，函数返回值是右值，std::move转为右值。而，窃取资源，也就是浅拷贝后并且将原来的设置为null，是在移动构造函数中完成的，所以需要类自己提供，而不是你move可以后就可以窃取资源。
+
+函数传递参数例如下面其实里面形参是这样做的`A a = std::move(b)` 就只是加个=
+```cpp
+A func(A a)
+{
+    return a;// 返回值是右值类型
+}
+TEST(function,r)
+{
+    A b(4);
+    func(std::move(b));// A c = func(std::move(b))结果与下面一致，好像是编译器优化
+}
+```
+
+```cpp
+4 constructor called
+150090325 move constructor called
+166190768 move constructor called
+166190768 deconstructer called
+150090325 deconstructer called
+4 deconstructer called
+```
+
+
