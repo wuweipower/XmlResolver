@@ -1,3 +1,4 @@
+## 关于在头文件中定义变量的问题
 关于在头文件中定义变量的问题。
 核心就是include就是复制粘贴
 a.h
@@ -41,6 +42,7 @@ extern int x;// 只是声明，在其他文件定义，然后使用的话，就�
 ```
 关于extern， 没有初始化的话就是声明，因为你可能没有include这个变量或者函数的文件，你可以extern后链接这个库，就可以使用了。
 
+## 转为绝对路径
 将相对路径转为绝对路径，除了自己写转换拼接的方式可以使用一下代码
 ```c++
 char* abs = new char[1024];
@@ -52,6 +54,7 @@ realpath(filename,abs);
 #endif
 ```
 
+## shared_ptr中this指针的问题
 enable_shared_from_this and shared_from_this
 ```C++
 auto p = std::shared_ptr<T>(this);// it will occur double free since deconstructer
@@ -60,6 +63,7 @@ auto p = std::make_shared<T>(*this)l //copy and construct a new one
 auto p = shared_from_this(); // standard
 ```
 
+## 有static性质变量的线程安全问题
 类里面如果有mutex，这个类的拷贝构造函数就被编译器删除了，因为锁是无法赋值和move的，
 
 具有static性质的变量，容易发生线程不安全，可以使用__thread每个线程保存一份。
@@ -108,7 +112,7 @@ TEST(thread,safaty)
 static_assert 编译期间的断言，  
 assert是运行期间的判断，并且会强制中止程序  
 
-很有用的宏
+## 很有用的宏
 ```cpp
 __LINE__
 __func__
@@ -125,9 +129,12 @@ const_cast主要是用来去除const限制，但是地址还是一样的，修�
 const int &age = 10;
 int& age = 10; //error
 
+## 关于拷贝与赋值
 赋值不是拷贝，赋值是更新内存中的值，而拷贝是构造一份新的，开辟了新的空间  
 赋值重载函数于拷贝构造函数的调用时期：  
 当两个对象都已经创建后，之间的 `=` 是赋值，如果是第二个对象是用第一个对象的来创建， 就会调用拷贝构造函数。  
+
+## 关于move
 关于左值右值，函数返回值是右值，std::move转为右值。而，窃取资源，也就是浅拷贝后并且将原来的设置为null，是在移动构造函数中完成的，所以需要类自己提供，而不是你move可以后就可以窃取资源。  
 
 函数传递参数例如下面其实里面形参是这样做的`A a = std::move(b)` 就只是加个=
@@ -151,7 +158,7 @@ TEST(function,r)
 150090325 deconstructer called
 4 deconstructer called
 ```
-
+## 关于解析器
 xml树形结构的核心就是递归函数的编写
 ```cpp
 parse(T parent, T previous_sibling)
@@ -222,6 +229,7 @@ void wrapper(T&& arg)
 }
 ```
 
+## auto and decltype
 auto自动推导类型，配合lambda特别好
 
 对于非引用，非指针场景下，初始化器涉及的引用性，不可变性会丢失，因为模板实参推导规则也是这样的
@@ -246,6 +254,7 @@ decltype：
 decltype(auto): since c++14
 以初始化表达式替换decltype(auto)中的auto，再通过decltype推导类型（必须存在初始化表达式）
 
+## move
 C++11开始，提出右值概念，用于标记哪些变量的资源是可以窃取的，配合移动构造、移动复制构造等方式实现资源的窃取
 - glvalue: 泛左值
 - lvalue: 左值，一般是可以取地址的值
@@ -258,6 +267,7 @@ C++11开始，提出右值概念，用于标记哪些变量的资源是可以窃
 注意：move只是将变量转为右值，真正窃取资源要配合移动构造  
 右值引用也是为了减少拷贝  
 
+## lambda
 lambda：  
 功能：匿名函数，本质类似函数对象  
 捕获：  
@@ -267,7 +277,7 @@ lambda：
 一般情况下，lambda无需说明返回值类型，编译器会根据返回语句自动推导  
 当存在多条返回语句，且类型不同时，可以通过尾置返回类型描述返回值类型，  
 
-
+## shared_ptr
 shared_ptr：  
 同一指针可归属多个shared_ptr对象，通过引用计数记录关联者数量，当引用计数归零后，自动释放关联指针  
 对于gcc一般情况，使用原子变量控制引用记录的并发增减  
@@ -316,3 +326,118 @@ for (const auto &[name, age] : users) {
     std::cout << std::endl;
 }
 ```
+
+# cpp
+通常，main()被启动函数调用，而启动代码是编译器加在代码中的，是程序与操作系统之间的桥梁  
+字符的数字表示\0 \ox \u \U分别用八进制，十六进制，unicode 8个十六进制位，unicode 16个十六进制位  
+int是计算机最自然的类型，一般情况下会有整型提升。
+在算术表达式的计算中，不同类型的数据会进行类型转换。  
+强制类型转换不会改变变量本身，而是创建了一个新的，指定类型的值。  
+引入什么cast是为了更加安全。
+
+编译器不会检查[]下标是否有效
+struct也可以使用列表初始化
+```cpp
+struct A
+{
+    string name;
+    int age : 4;//位字段
+}
+A a{"",1};
+```
+共用体每次智能存储一个值，共用体长度为最大成员长度  
+匿名共用体没有名称，其成员将成为位于相同地址处的变量，显然，每次只有一个成员是当前成员  
+
+```cpp
+struct A
+{
+    int a;
+    union id
+    {
+        long id_n;
+        char id_c;
+    } id_val;
+}
+A a;
+cout<<a.id_val.id_n;
+
+struct A
+{
+    int a;
+    union
+    {
+        long id_n;
+        char id_c;
+    };
+}
+A a;
+cout<<a.id_n;//不需要中间变量了
+```
+
+```
+while(i++,j++)不行 for可以
+```
+
+逗号运算符是从左到右进行计算的
+
+## 指针与const
+1. 指向常量的对象，防止通过指针进行改变
+```cpp
+int age = 1;
+const int* p = &age;
+// 对*p的任何操作都是不合理的
+// 常量地址不能赋值给普通指针
+```
+2. 将指针本身声明为常量，防止改变指针指向的位置
+```cpp
+int* const p = &age;// p只能指向这个地址了，不过可以修改地址代表的值
+```
+
+多使用const  
+可以避免无意间的修改  
+const能能使函数处理const和非const实参
+
+c风格的字符串内置结束符，不以空值字符结尾的char数组不是字符串
+
+函数指针
+```cpp
+类型 (*名字) (参数列表)
+int (*p) (int,int);// p就是函数指针变量
+使用typedef简化
+typedef int (*func_ptr)(int,int); //func_ptr就是int (int ,int)函数指针类型
+```
+
+## 模板
+非模板 > 显式具体化 > 模板
+```cpp
+template<typename T> void swap(T&,T&);
+
+显式具体化
+template <> void swap<int>(int&,int&);
+template <> void swap(int&,int&); 
+//不过需要单独提供函数体
+```
+
+函数模板本身不会生成函数定义，只是用于生成函数定义的方案。  
+编译器使用模板为特定类型生成函数定义是，得到的是模板实例  
+函数调用的时候，编译器会生成函数的实例，成为隐式实例化。  
+C++现在允许显示实例化，直接命令编译器创建特定的实例。如swap\<int>()
+```cpp
+//直接生成了实例，不需要像上面一样单独另外写个函数体
+//这个只是声明
+template void swap<int>(int,int); 
+
+//可以不提前声明，直接使用
+swap<int>(a,b);
+```
+
+**不建议将变量的定义放在头文件中，以避免重定义错误。头文件应当专注于声明函数、类、结构体、模板，#define,const,内联函数，枚举等的接口，以及定义类型别名和常量的声明。变量的定义应当放在源文件中，以确保每个源文件只有一个定义。**
+
+如果在头文件中声明但是，多个包含它的cpp文件又定义它，那肯定是重定义  
+前面说的只是声明所以多个cpp包含，并没有又定义
+
+\<>将在存储标准头文件的主机系统中的文件系统中查找，但是文件名是双引号在当前工作目录或者源代码目录，如果没找到就去标准位置找
+
+在同一文件中，只能将同一个头文件包含一次，但是多个文件都可以自己包含一份，链接
+
+
