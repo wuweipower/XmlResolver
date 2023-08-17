@@ -1,3 +1,6 @@
+## extern
+如果对extern变量进行赋值，它表示在当前文件中为该变量提供了一个初始值。这个赋值操作只会影响当前文件中的变量，不会修改其他文件中的变量
+
 ## 多态
 虚函数表（Virtual Function Table）是在编译期创建的，而虚函数指针（Virtual Function Pointer）是在运行时创建的。
 

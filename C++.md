@@ -58,7 +58,7 @@ realpath(filename,abs);
 enable_shared_from_this and shared_from_this
 ```C++
 auto p = std::shared_ptr<T>(this);// it will occur double free since deconstructer
-auto p = std::make_shared<T>(*this)l //copy and construct a new one
+auto p = std::make_shared<T>(*this) //copy and construct a new one
 
 auto p = shared_from_this(); // standard
 ```
@@ -66,7 +66,7 @@ auto p = shared_from_this(); // standard
 ## 有static性质变量的线程安全问题
 类里面如果有mutex，这个类的拷贝构造函数就被编译器删除了，因为锁是无法赋值和move的，
 
-具有static性质的变量，容易发生线程不安全，可以使用__thread每个线程保存一份。
+具有static性质的变量，容易发生线程不安全，可以使用__thread每个线程保存一份。最好使用thread_local 实现跨平台
 ```c++
 const char* print(const string name)
 {
@@ -197,12 +197,12 @@ parse(T parent, T previous_sibling)
 11. string默认为空
 12. 时刻加上考虑越界的条件
 13. 头文件中不要定义变量（会造成重复定义），声明extern即可，用另外一个文件定义，然后链接在一起
-14. 使用了static最好加上__thread保证线程安全
+14. 使用了static最好加上__thread保证线程安全thread_local
 15. nullptr不能赋值给string
 16. 可以折叠switch中的case如果这几个case返回值一样
 17. 不应该出现多个shared_ptr指向同一个裸指针，会double free
-18. const 不能move
-19.
+18. const move后，移动构造函数是不能接收的，只有拷贝构造函数能够接受，因为move只是去掉了reference没有去掉const, 移动构造函数只能接受纯右值。
+
 
 
 ## meta-programming
