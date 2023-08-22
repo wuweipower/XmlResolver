@@ -58,7 +58,7 @@ template<typename T> void f(T param); //以传值的⽅式处理param
 
 ```cpp
 int x=27; //如之前⼀样 c
-onst int cx=x; //如之前⼀样 
+const int cx=x; //如之前⼀样 
 const int & rx=cx; //如之前⼀样 
 f(x); //T和param的类型都是int 
 f(cx); //T和param的类型都是int 
@@ -266,7 +266,7 @@ std::vector<int> vec{1, 2, 3}; // 列表的初始化
 ```cpp
 Copy
 int a = 3.14; // 隐式类型转换，a 的值为 3
-int b(3.14); // 编译错误，不允许将 double 类型直接转换为 int 类型
+int b(3.14); // 
 int c{3.14}; // 编译错误，不允许将 double 类型直接转换为 int 类型
 ```
 总的来说，使用花括号 {} 进行初始化更加通用且严格，可以实现聚合初始化、列表初始化以及更好的类型检查。
@@ -335,7 +335,9 @@ template<typename T> class Widget {
 template<> //当T是Wine 
 class MyAllocList<Wine> { //特化MyAllocList 
 private: enum class WineType //参⻅Item10了解 
-{ White, Red, Rose }; //"enum class" WineType type; //在这个类中，type是 … //⼀个数据成员！ 
+{ White, Red, Rose }; //"enum class" 
+WineType type; //在这个类中，type是 
+… //⼀个数据成员！ 
 };
 
 ```
